@@ -54,17 +54,17 @@ describe('lib/notes.js', () => {
     });
   });
 
-  describe('.read', () => {
-    test('() should return all notes when called with no arguments', async () => {
+  describe('.read(id)', () => {
+    test('should return all notes when called with no arguments', async () => {
       const noteList = await notes.read();
       expect(noteList.length).toEqual(notes._data.db.length);
     });
-    test('(id) should return the note with matching id if it exists', async () => {
+    test('should return the note with matching id if it exists', async () => {
       const [note] = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(note.title).toEqual('Test1');
       expect(note.text).toEqual('This is a test note.');
     });
-    test('(id) should throw an error if no id matches', async () => {
+    test('should throw an error if no id matches', async () => {
       await expect(notes.read(nilUuid)).rejects.toThrow();
     });
   });
