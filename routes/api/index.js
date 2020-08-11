@@ -3,29 +3,60 @@ const router = require('express').Router();
 const notes = require(path.join(__basedir, 'lib/notes'));
 
 router.get('/notes', async (req, res) => {
-  res.json(await notes.read());
+  try {
+    res.json(await notes.read());
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 router.get('/notes/:id', async (req, res) => {
-  const result = await notes.read(req.params.id);
-  if (result.length > 0) res.json(result);
-  else res.sendStatus(404);
+  try {
+    res.json(await notes.read(req.params.id));
+  } catch (err) {
+    if (err.type === 'notFound') res.sendStatus(404);
+    else res.status(500).send(err);
+  }
 });
 
 router.post('/notes', async (req, res) => {
-  const note = await notes.create(req.body);
-  if (note) res.json(note);
-  else res.sendStatus(400);
+  try {
+    res.json(await notes.create(req.body));
+  } catch (err) {
+    if (err.type === 'failedValidation') res.sendStatus(400);
+    else res.status(500).send(err);
+  }
 });
 
 router.post('/notes/:id', async (req, res) => {
-  const ok = await notes.update(req.body);
-  if (ok) res.status(200).send(req.body);
-  else res.sendStatus(400);
+  try {
+    res.send(await notes.update(req.body));
+  } catch (err) {
+    if (err.type) {
+      switch (err.type) {
+        case 'notFound': {
+          res.sendStatus(404);
+          break;
+        }
+        case 'failedValidation': {
+          res.sendStatus(400);
+          break;
+        }
+        default: {
+          res.status(500).send(err);
+          break;
+        }
+      }
+    }
+  }
 });
 
 router.delete('/notes/:id', async (req, res) => {
-  const ok = await notes.drop(req.params.id);
-  if (ok) res.sendStatus(204);
-  else res.sendStatus(400);
+  try {
+    await notes.drop(req.params.id);
+    res.sendStatus(204);
+  } catch (err) {
+    if (err.type === 'notFound') res.sendStatus(404);
+    else res.status(500).send(err);
+  }
 });
 module.exports = router;
