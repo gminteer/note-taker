@@ -14,6 +14,7 @@ module.exports = {
     'no-template-curly-in-string': ['warn'],
     'prefer-template': ['warn'],
     'require-jsdoc': ['off'],
+    'new-cap': ['error', {capIsNewExceptions: ['Router']}],
     'no-debugger': ['warn'],
     'vars-on-top': ['warn'],
     'brace-style': ['error', '1tbs', {allowSingleLine: true}],
