@@ -1,4 +1,3 @@
-global.__basedir = __dirname;
 const express = require('express');
 
 const apiRoutes = require('./routes/api');
