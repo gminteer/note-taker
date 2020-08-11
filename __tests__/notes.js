@@ -28,8 +28,7 @@ beforeEach(() => {
 describe('lib/notes.js', () => {
   describe('.create(note)', () => {
     test('should return an object', async () => {
-      const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
-      expect(newNote).toEqual(expect.any(Object));
+      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).resolves.toEqual(expect.any(Object));
     });
     test('title and text should match input', async () => {
       const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
@@ -78,7 +77,7 @@ describe('lib/notes.js', () => {
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
       const result = await notes.update(replacementNote);
-      expect(result).toBeTruthy();
+      expect(result).toEqual(replacementNote);
       const [getNote] = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(getNote.title).toEqual('differentTitle');
       expect(getNote.text).toEqual('differentText');
@@ -100,7 +99,7 @@ describe('lib/notes.js', () => {
 
   describe('.drop(id)', () => {
     test('should remove the note matching the id', async () => {
-      await notes.drop('70a38567-e3e1-4c44-8777-86647acd5adf');
+      await expect(notes.drop('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toBeTruthy();
       await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrow();
     });
     test('notes array should be one element shorter after dropping a note', async () => {
