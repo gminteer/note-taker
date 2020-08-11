@@ -3,11 +3,12 @@ module.exports = {
     node: true,
     browser: true,
     es2017: true,
+    'jest/globals': true,
   },
   globals: {
     __basedir: 'readonly',
   },
-  plugins: ['prettier', 'promise', 'import', 'node', 'compat'],
+  plugins: ['prettier', 'promise', 'import', 'node', 'compat', 'jest'],
   extends: ['eslint:recommended', 'google', 'prettier'],
   rules: {
     'prettier/prettier': ['warn'],
