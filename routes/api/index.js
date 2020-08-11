@@ -13,7 +13,7 @@ router.get('/notes/:id', async (req, res) => {
   try {
     res.json(await notes.read(req.params.id));
   } catch (err) {
-    if (err.type === 'notFound') res.sendStatus(404);
+    if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
     else res.status(500).send(err);
   }
 });
@@ -22,7 +22,7 @@ router.post('/notes', async (req, res) => {
   try {
     res.json(await notes.create(req.body));
   } catch (err) {
-    if (err.type === 'failedValidation') res.sendStatus(400);
+    if (err.code === 'NOTE_FAILED_VALIDATION') res.sendStatus(400);
     else res.status(500).send(err);
   }
 });
@@ -31,13 +31,13 @@ router.post('/notes/:id', async (req, res) => {
   try {
     res.send(await notes.update(req.body));
   } catch (err) {
-    if (err.type) {
-      switch (err.type) {
-        case 'notFound': {
+    if (err.code) {
+      switch (err.code) {
+        case 'NOTE_NOT_FOUND': {
           res.sendStatus(404);
           break;
         }
-        case 'failedValidation': {
+        case 'NOTE_FAILED_VALIDATION': {
           res.sendStatus(400);
           break;
         }
@@ -55,7 +55,7 @@ router.delete('/notes/:id', async (req, res) => {
     await notes.drop(req.params.id);
     res.sendStatus(204);
   } catch (err) {
-    if (err.type === 'notFound') res.sendStatus(404);
+    if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
     else res.status(500).send(err);
   }
 });
