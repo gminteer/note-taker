@@ -7,9 +7,10 @@ module.exports = {
   },
   globals: {
     __basedir: 'readonly',
+    $: 'readonly',
   },
-  plugins: ['prettier', 'promise', 'import', 'node', 'compat', 'jest'],
-  extends: ['eslint:recommended', 'google', 'prettier'],
+  plugins: ['prettier', 'promise', 'import', 'node', 'compat', 'jest', 'jquery'],
+  extends: ['eslint:recommended', 'plugin:jquery/deprecated', 'google', 'prettier'],
   rules: {
     'prettier/prettier': ['warn'],
     'no-template-curly-in-string': ['warn'],
