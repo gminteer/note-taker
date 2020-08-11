@@ -1,0 +1,31 @@
+GET http://127.0.0.1:3001/api/notes
+Accept: application/json
+
+###
+GET http://127.0.0.1:3001/api/notes/70a38567-e3e1-4c44-8777-86647acd5adf
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:3001/api/notes
+Content-Type: application/json
+
+{
+  "title": "New Note",
+  "text": "Testing API"
+}
+
+###
+
+POST http://127.0.0.1:3001/api/notes/70a38567-e3e1-4c44-8777-86647acd5adf
+Content-Type: application/json
+
+{
+  "id": "70a38567-e3e1-4c44-8777-86647acd5adf",
+  "title": "Changed title.",
+  "text": "Changed text."
+}
+
+###
+
+DELETE http://127.0.0.1:3001/api/notes/bcb90ac5-0370-423c-a589-ba1b7e419075
