@@ -24,10 +24,18 @@ const saveNote = function (note) {
   });
 };
 
+const changeNote = function (note) {
+  return $.ajax({
+    url: `/api/notes/${note.id}`,
+    data: note,
+    method: 'POST',
+  });
+};
+
 // BONUS A function for deleting a note from the db
 const deleteNote = function (id) {
   return $.ajax({
-    url: `api/notes/${id}`,
+    url: `/api/notes/${id}`,
     method: 'DELETE',
   });
 };
@@ -37,8 +45,8 @@ const renderActiveNote = function () {
   $saveNoteBtn.hide();
 
   if (activeNote.id) {
-    $noteTitle.attr('readonly', true);
-    $noteText.attr('readonly', true);
+    // $noteTitle.attr('readonly', true);
+    // $noteText.attr('readonly', true);
     $noteTitle.val(activeNote.title);
     $noteText.val(activeNote.text);
   } else {
@@ -55,8 +63,15 @@ const handleNoteSave = function () {
     title: $noteTitle.val(),
     text: $noteText.val(),
   };
-
-  saveNote(newNote).then(function (data) {
+  let func;
+  if (activeNote.id) {
+    func = changeNote;
+    newNote.id = activeNote.id;
+    activeNote = newNote;
+  } else {
+    func = saveNote;
+  }
+  func(newNote).then(function (data) {
     getAndRenderNotes();
     renderActiveNote();
   });
