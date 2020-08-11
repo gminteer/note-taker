@@ -1,6 +1,6 @@
 const path = require('path');
 const router = require('express').Router();
-const notes = require(path.join(__dirname, '../../lib/notes'));
+const notes = require(path.join(__basedir, 'lib/notes'));
 
 router.get('/notes', async (req, res) => {
   try {

@@ -2,9 +2,9 @@ const path = require('path');
 const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 
 // eslint-disable-next-line no-unused-vars
-const data = require(path.join(__dirname, '../lib/data'));
-jest.mock(path.join(__dirname, '../lib/data'));
-const notes = require(path.join(__dirname, '../lib/notes'));
+const data = require(path.join(__basedir, 'lib/data'));
+jest.mock(path.join(__basedir, 'lib/data'));
+const notes = require(path.join(__basedir, 'lib/notes'));
 beforeEach(() => {
   notes._data.db = [
     {
