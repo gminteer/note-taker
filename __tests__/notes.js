@@ -2,13 +2,13 @@ const path = require('path');
 const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 
 // eslint-disable-next-line no-unused-vars
-const data = require(path.join(__dirname, '../lib/data'));
-jest.mock(path.join(__dirname, '../lib/data'));
+jest.mock(path.join(__dirname, '../lib/persistent-array'));
+const PersistentArray = require(path.join(__dirname, '../lib/persistent-array'));
 const Notes = require(path.join(__dirname, '../lib/notes'));
-const notes = new Notes();
+const notes = new Notes(new PersistentArray());
 
 beforeEach(() => {
-  notes._data.db = [
+  notes._data.array = [
     {
       title: 'Test1',
       text: 'This is a test note.',
@@ -43,10 +43,10 @@ describe('lib/notes.js', () => {
       expect(isValidUuid(newNote.id)).toBeTruthy();
     });
     test('notes array should be one element longer after creating a note', async () => {
-      const oldLength = notes._data.db.length;
+      const oldLength = notes._data.array.length;
       // eslint-disable-next-line no-unused-vars
       const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
-      expect(notes._data.db.length).toEqual(oldLength + 1);
+      expect(notes._data.array.length).toEqual(oldLength + 1);
     });
     test('should throw an error on invalid input', async () => {
       await expect(notes.create()).rejects.toThrow();
@@ -60,7 +60,7 @@ describe('lib/notes.js', () => {
   describe('.read(id)', () => {
     test('should return all notes when called with no arguments', async () => {
       const noteList = await notes.read();
-      expect(noteList.length).toEqual(notes._data.db.length);
+      expect(noteList.length).toEqual(notes._data.array.length);
     });
     test('should return the note with matching id if it exists', async () => {
       const note = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
@@ -106,9 +106,9 @@ describe('lib/notes.js', () => {
       await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrow();
     });
     test('notes array should be one element shorter after dropping a note', async () => {
-      const oldLength = notes._data.db.length;
+      const oldLength = notes._data.array.length;
       await notes.drop('70a38567-e3e1-4c44-8777-86647acd5adf');
-      expect(notes._data.db.length).toEqual(oldLength - 1);
+      expect(notes._data.array.length).toEqual(oldLength - 1);
     });
     test("should throw an error if id isn't matched", async () => {
       await expect(notes.drop(nilUuid)).rejects.toThrow();

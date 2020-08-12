@@ -37,7 +37,7 @@ Content-Type: application/json
 
 {
   "id": "347f2b0c-1e64-41d0-b135-2e60f7cb2547",
-  "title": "Changed title.",
+  "title": "Changed.",
   "text": "Changed text."
 }
 
