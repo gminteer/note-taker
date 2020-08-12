@@ -5,6 +5,7 @@ const Notes = require('../../lib/notes');
 const PersistentArray = require('../../lib/persistent-array');
 
 (async () => {
+  // Setting up the routes is wrapped in an async IIFE to avoid reading in the JSON file synchronously
   const data = await PersistentArray.build(path.join(__dirname, '../../db/db.json'));
   const notes = new Notes(data);
 
@@ -44,27 +45,20 @@ const PersistentArray = require('../../lib/persistent-array');
     } catch (err) {
       if (err.code) {
         switch (err.code) {
-          case 'NOTE_NOT_FOUND': {
-            res.sendStatus(404);
-            break;
-          }
-          case 'NOTE_FAILED_VALIDATION': {
-            res.sendStatus(400);
-            break;
-          }
-          default: {
-            res.status(500).json(err);
-            break;
-          }
+          case 'NOTE_NOT_FOUND':
+            return res.sendStatus(404);
+          case 'NOTE_FAILED_VALIDATION':
+            return res.sendStatus(400);
         }
       }
+      return res.status(500).json(err);
     }
   });
 
   // Delete
   router.delete('/notes/:id', async (req, res) => {
     try {
-      await notes.drop.bind(notes)(req.params.id);
+      await notes.delete(req.params.id);
       res.sendStatus(204);
     } catch (err) {
       if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);

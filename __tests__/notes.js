@@ -2,8 +2,8 @@ const path = require('path');
 const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 
 jest.mock(path.join(__dirname, '../lib/persistent-array'));
-const PersistentArray = require(path.join(__dirname, '../lib/persistent-array'));
-const Notes = require(path.join(__dirname, '../lib/notes'));
+const PersistentArray = require('../lib/persistent-array');
+const Notes = require('../lib/notes');
 const notes = new Notes(new PersistentArray());
 
 beforeEach(() => {
@@ -32,27 +32,27 @@ describe('lib/notes.js', () => {
     test('should return an object', async () => {
       await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).resolves.toEqual(expect.any(Object));
     });
-    test('title and text should match input', async () => {
+    test('should return an object that matches input', async () => {
       const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
       expect(newNote.title).toEqual('newNoteTitle');
       expect(newNote.text).toEqual('newNoteText');
     });
-    test('should have a valid UUID as an id', async () => {
+    test('should return an object with a valid id', async () => {
       const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
       expect(isValidUuid(newNote.id)).toBeTruthy();
     });
-    test('notes array should be one element longer after creating a note', async () => {
+    test('should store the created object in the notes array', async () => {
       const oldLength = notes._data.array.length;
       // eslint-disable-next-line no-unused-vars
       const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
       expect(notes._data.array.length).toEqual(oldLength + 1);
     });
     test('should throw an error on invalid input', async () => {
-      await expect(notes.create()).rejects.toThrow();
+      await expect(notes.create()).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw an error if the write fails', async () => {
       notes._data.writeShouldSucceed = false;
-      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).rejects.toThrow();
+      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).rejects.toThrowErrorMatchingSnapshot();
     });
   });
 
@@ -61,18 +61,18 @@ describe('lib/notes.js', () => {
       const noteList = await notes.read();
       expect(noteList.length).toEqual(notes._data.array.length);
     });
-    test('should return the note with matching id if it exists', async () => {
+    test('should return a note with a matching id if it exists', async () => {
       const note = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(note.title).toEqual('Test1');
       expect(note.text).toEqual('This is a test note.');
     });
     test('should throw an error if no id matches', async () => {
-      await expect(notes.read(nilUuid)).rejects.toThrow();
+      await expect(notes.read(nilUuid)).rejects.toThrowErrorMatchingSnapshot();
     });
   });
 
   describe('.update(note)', () => {
-    test('should replace the note matching that id', async () => {
+    test('should replace the note matching that id if it exists', async () => {
       const replacementNote = {
         title: 'differentTitle',
         text: 'differentText',
@@ -84,16 +84,26 @@ describe('lib/notes.js', () => {
       expect(getNote.title).toEqual('differentTitle');
       expect(getNote.text).toEqual('differentText');
     });
+    test("shouldn't change the size of the array", async () => {
+      const replacementNote = {
+        title: 'differentTitle',
+        text: 'differentText',
+        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
+      };
+      const oldLength = notes._data.array.length;
+      await notes.update(replacementNote);
+      expect(notes._data.array.length).toEqual(oldLength);
+    });
     test("should throw an error if id isn't matched", async () => {
       const invalidNote = {title: 'invalidNote', text: 'invalidText', id: nilUuid};
-      await expect(notes.update(invalidNote)).rejects.toThrow();
+      await expect(notes.update(invalidNote)).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw an error if the update is invalid', async () => {
       const invalidUpdate = {
         title: '',
         text: "this shouldn't work",
       };
-      await expect(notes.update(invalidUpdate)).rejects.toThrow();
+      await expect(notes.update(invalidUpdate)).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw an error if the write fails', async () => {
       const replacementNote = {
@@ -102,26 +112,26 @@ describe('lib/notes.js', () => {
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
       notes._data.writeShouldSucceed = false;
-      await expect(notes.update(replacementNote)).rejects.toThrow();
+      await expect(notes.update(replacementNote)).rejects.toThrowErrorMatchingSnapshot();
     });
   });
 
   describe('.drop(id)', () => {
     test('should remove the note matching the id', async () => {
-      await expect(notes.drop('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toBeTruthy();
-      await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrow();
+      await expect(notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toBeTruthy();
+      await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrowErrorMatchingSnapshot();
     });
     test('notes array should be one element shorter after dropping a note', async () => {
       const oldLength = notes._data.array.length;
-      await notes.drop('70a38567-e3e1-4c44-8777-86647acd5adf');
+      await notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(notes._data.array.length).toEqual(oldLength - 1);
     });
     test("should throw an error if id isn't matched", async () => {
-      await expect(notes.drop(nilUuid)).rejects.toThrow();
+      await expect(notes.delete(nilUuid)).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw an error if the write fails', async () => {
       notes._data.writeShouldSucceed = false;
-      await expect(notes.drop('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrow();
+      await expect(notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrowErrorMatchingSnapshot();
     });
   });
 });
