@@ -7,6 +7,12 @@
     "test": "jest",
     "start": "node index.js"
   },
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": [
+      "html"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

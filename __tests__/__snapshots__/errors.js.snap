@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotesError should set a message based on provided error code if no message is provided 1`] = `[Error: "test" not in notes array]`;
+
+exports[`NotesError should set a message based on provided error code if no message is provided 2`] = `[Error: suggested note does not validate]`;
+
+exports[`NotesError should set a message based on provided error code if no message is provided 3`] = `[Error: write failed with "test"]`;

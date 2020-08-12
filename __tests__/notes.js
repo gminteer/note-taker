@@ -102,6 +102,7 @@ describe('lib/notes.js', () => {
       const invalidUpdate = {
         title: '',
         text: "this shouldn't work",
+        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
       await expect(notes.update(invalidUpdate)).rejects.toThrowErrorMatchingSnapshot();
     });
