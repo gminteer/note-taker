@@ -28,7 +28,7 @@ const changeNote = function (note) {
   return $.ajax({
     url: `/api/notes/${note.id}`,
     data: note,
-    method: 'POST',
+    method: 'PUT',
   });
 };
 

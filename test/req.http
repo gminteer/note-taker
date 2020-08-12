@@ -2,13 +2,14 @@ GET http://127.0.0.1:3001/api/notes
 Accept: application/json
 
 ###
-GET http://127.0.0.1:3001/api/notes/70a38567-e3e1-4c44-8777-86647acd5adf
+GET http://127.0.0.1:3001/api/notes/347f2b0c-1e64-41d0-b135-2e60f7cb2547
 Accept: application/json
 
 ###
 
 GET http://127.0.0.1:3001/api/notes/banana
 Accept: application/json
+
 
 ###
 POST http://127.0.0.1:3001/api/notes
@@ -31,18 +32,18 @@ Content-Type: application/json
 
 ###
 
-POST http://127.0.0.1:3001/api/notes/70a38567-e3e1-4c44-8777-86647acd5adf
+PUT http://127.0.0.1:3001/api/notes/347f2b0c-1e64-41d0-b135-2e60f7cb2547
 Content-Type: application/json
 
 {
-  "id": "70a38567-e3e1-4c44-8777-86647acd5adf",
+  "id": "347f2b0c-1e64-41d0-b135-2e60f7cb2547",
   "title": "Changed title.",
   "text": "Changed text."
 }
 
 ###
 
-POST http://127.0.0.1:3001/api/notes/70a38567-e3e1-4c44-8777-86647acd5adf
+PUT http://127.0.0.1:3001/api/notes/347f2b0c-1e64-41d0-b135-2e60f7cb2547
 Content-Type: application/json
 
 {
@@ -53,11 +54,11 @@ Content-Type: application/json
 
 ###
 
-POST http://127.0.0.1:3001/api/notes/70a38567-e3e1-4c44-8777-86647acd5adf
+PUT http://127.0.0.1:3001/api/notes/347f2b0c-1e64-41d0-b135-2e60f7cb2547
 Content-Type: application/json
 
 {
-  "id": "70a38567-e3e1-4c44-8777-86647acd5adf",
+  "id": "347f2b0c-1e64-41d0-b135-2e60f7cb2547",
   "title": "",
   "text": "This shouldn't work."
 }

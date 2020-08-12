@@ -1,12 +1,13 @@
 const path = require('path');
 const router = require('express').Router();
-const notes = require(path.join(__basedir, 'lib/notes'));
+const notes = require(path.join(__dirname, '../../lib/notes'));
 
+// Read
 router.get('/notes', async (req, res) => {
   try {
     res.json(await notes.read());
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).json(err);
   }
 });
 router.get('/notes/:id', async (req, res) => {
@@ -14,20 +15,24 @@ router.get('/notes/:id', async (req, res) => {
     res.json(await notes.read(req.params.id));
   } catch (err) {
     if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
-    else res.status(500).send(err);
+    else res.status(500).json(err);
   }
 });
 
+// Create
 router.post('/notes', async (req, res) => {
   try {
-    res.json(await notes.create(req.body));
+    const note = await notes.create(req.body);
+    res.append('Location', `/notes/${note.id}`);
+    res.status(201).json(note);
   } catch (err) {
     if (err.code === 'NOTE_FAILED_VALIDATION') res.sendStatus(400);
-    else res.status(500).send(err);
+    else res.status(500).json(err);
   }
 });
 
-router.post('/notes/:id', async (req, res) => {
+// Update
+router.put('/notes/:id', async (req, res) => {
   try {
     res.send(await notes.update(req.body));
   } catch (err) {
@@ -42,7 +47,7 @@ router.post('/notes/:id', async (req, res) => {
           break;
         }
         default: {
-          res.status(500).send(err);
+          res.status(500).json(err);
           break;
         }
       }
@@ -56,7 +61,8 @@ router.delete('/notes/:id', async (req, res) => {
     res.sendStatus(204);
   } catch (err) {
     if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
-    else res.status(500).send(err);
+    else res.status(500).json(err);
   }
 });
+
 module.exports = router;

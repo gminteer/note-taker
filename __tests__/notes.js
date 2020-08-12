@@ -2,9 +2,11 @@ const path = require('path');
 const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 
 // eslint-disable-next-line no-unused-vars
-const data = require(path.join(__basedir, 'lib/data'));
-jest.mock(path.join(__basedir, 'lib/data'));
-const notes = require(path.join(__basedir, 'lib/notes'));
+const data = require(path.join(__dirname, '../lib/data'));
+jest.mock(path.join(__dirname, '../lib/data'));
+const Notes = require(path.join(__dirname, '../lib/notes'));
+const notes = new Notes();
+
 beforeEach(() => {
   notes._data.db = [
     {
@@ -61,7 +63,7 @@ describe('lib/notes.js', () => {
       expect(noteList.length).toEqual(notes._data.db.length);
     });
     test('should return the note with matching id if it exists', async () => {
-      const [note] = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
+      const note = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(note.title).toEqual('Test1');
       expect(note.text).toEqual('This is a test note.');
     });
@@ -79,7 +81,7 @@ describe('lib/notes.js', () => {
       };
       const result = await notes.update(replacementNote);
       expect(result).toEqual(replacementNote);
-      const [getNote] = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
+      const getNote = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(getNote.title).toEqual('differentTitle');
       expect(getNote.text).toEqual('differentText');
     });
