@@ -1,7 +1,6 @@
 const path = require('path');
 const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 
-// eslint-disable-next-line no-unused-vars
 jest.mock(path.join(__dirname, '../lib/persistent-array'));
 const PersistentArray = require(path.join(__dirname, '../lib/persistent-array'));
 const Notes = require(path.join(__dirname, '../lib/notes'));
@@ -88,6 +87,13 @@ describe('lib/notes.js', () => {
     test("should throw an error if id isn't matched", async () => {
       const invalidNote = {title: 'invalidNote', text: 'invalidText', id: nilUuid};
       await expect(notes.update(invalidNote)).rejects.toThrow();
+    });
+    test('should throw an error if the update is invalid', async () => {
+      const invalidUpdate = {
+        title: '',
+        text: "this shouldn't work",
+      };
+      await expect(notes.update(invalidUpdate)).rejects.toThrow();
     });
     test('should throw an error if the write fails', async () => {
       const replacementNote = {

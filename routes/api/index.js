@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const path = require('path');
+
 const Notes = require('../../lib/notes');
 const PersistentArray = require('../../lib/persistent-array');
 
@@ -60,6 +61,7 @@ const PersistentArray = require('../../lib/persistent-array');
     }
   });
 
+  // Delete
   router.delete('/notes/:id', async (req, res) => {
     try {
       await notes.drop.bind(notes)(req.params.id);
@@ -70,4 +72,5 @@ const PersistentArray = require('../../lib/persistent-array');
     }
   });
 })();
+
 module.exports = router;
