@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>40/40</span>
+                <span class='fraction'>37/37</span>
             </div>
         
             
@@ -39,14 +39,14 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>37/37</span>
+                <span class='fraction'>34/34</span>
             </div>
         
             
@@ -118,23 +118,13 @@
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a>
-<a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L62'></a><a href='#L62'>62</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -186,8 +176,6 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -197,67 +185,61 @@ const path = require('path');
 const Notes = require('../../lib/notes');
 const PersistentArray = require('../../lib/persistent-array');
 &nbsp;
-const isReady = (async () =&gt; {
-  // Setting up the routes is wrapped in an async IIFE to avoid reading in the JSON file synchronously
-  const data = await PersistentArray.build(path.join(__dirname, '../../db/db.json'));
-  const notes = new Notes(data);
+const notes = new Notes(PersistentArray.build(path.join(__dirname, '../../db/db.json')));
+// Read
+router.get('/notes', async (req, res) =&gt; {
+  res.json(await notes.read());
+});
+router.get('/notes/:id', async (req, res) =&gt; {
+  try {
+    res.json(await notes.read(req.params.id));
+  } catch (err) {
+    if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
+    else res.status(500).json(err);
+  }
+});
 &nbsp;
-  // Read
-  router.get('/notes', async (req, res) =&gt; {
-    res.json(await notes.read());
-  });
-  router.get('/notes/:id', async (req, res) =&gt; {
-    try {
-      res.json(await notes.read(req.params.id));
-    } catch (err) {
-      if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
-      else res.status(500).json(err);
-    }
-  });
+// Create
+router.post('/notes', async (req, res) =&gt; {
+  try {
+    const note = await notes.create(req.body);
+    res.append('Location', `./${note.id}`);
+    res.status(201).json(note);
+  } catch (err) {
+    if (err.code === 'NOTE_FAILED_VALIDATION') res.sendStatus(400);
+    else res.status(500).json(err);
+  }
+});
 &nbsp;
-  // Create
-  router.post('/notes', async (req, res) =&gt; {
-    try {
-      const note = await notes.create(req.body);
-      res.append('Location', `/notes/${note.id}`);
-      res.status(201).json(note);
-    } catch (err) {
-      if (err.code === 'NOTE_FAILED_VALIDATION') res.sendStatus(400);
-      else res.status(500).json(err);
-    }
-  });
-&nbsp;
-  // Update
-  router.put('/notes/:id', async (req, res) =&gt; {
-    try {
-      res.send(await notes.update(req.body));
-    } catch (err) {
-      if (err.code) {
-        switch (err.code) {
-          case 'NOTE_NOT_FOUND':
-            return res.sendStatus(404);
-          case 'NOTE_FAILED_VALIDATION':
-            return res.sendStatus(400);
-        }
+// Update
+router.put('/notes/:id', async (req, res) =&gt; {
+  try {
+    res.send(await notes.update(req.body));
+  } catch (err) {
+    if (err.code) {
+      switch (err.code) {
+        case 'NOTE_NOT_FOUND':
+          return res.sendStatus(404);
+        case 'NOTE_FAILED_VALIDATION':
+          return res.sendStatus(400);
       }
-      return res.status(500).json(err);
     }
-  });
+    return res.status(500).json(err);
+  }
+});
 &nbsp;
-  // Delete
-  router.delete('/notes/:id', async (req, res) =&gt; {
-    try {
-      await notes.delete(req.params.id);
-      res.sendStatus(204);
-    } catch (err) {
-      if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
-      else res.status(500).json(err);
-    }
-  });
-  return true;
-})();
+// Delete
+router.delete('/notes/:id', async (req, res) =&gt; {
+  try {
+    await notes.delete(req.params.id);
+    res.sendStatus(204);
+  } catch (err) {
+    if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
+    else res.status(500).json(err);
+  }
+});
 &nbsp;
-module.exports = {router, isReady};
+module.exports = router;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -265,7 +247,7 @@ module.exports = {router, isReady};
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Wed Aug 12 2020 23:24:59 GMT-0400 (Eastern Daylight Time)
+                at Thu Aug 13 2020 00:32:14 GMT-0400 (Eastern Daylight Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>

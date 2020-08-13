@@ -7,9 +7,6 @@ jest.mock('../lib/notes');
 const Notes = require('../lib/notes');
 const app = require('../app');
 
-beforeAll(async () => {
-  await app.isReady; // TODO: rewrite routes so I don't have to do this
-});
 beforeEach(() => {
   shouldBeFound = true;
   shouldValidate = true;
@@ -44,8 +41,9 @@ describe('GET /api/notes/:id', () => {
 });
 
 describe('POST /api/notes', () => {
-  test('should respond 201 with body containing created note on success', async () => {
+  test('should respond 201 with location header and body containing created note on success', async () => {
     const response = await request(app).post('/api/notes').send({test: 'test'}).expect(201);
+    expect(response.header.location).toEqual('./0');
     expect(response.body).toEqual({test: 'test', id: 0});
   });
   test('should respond 400 if body fails validation', async () => {
@@ -90,6 +88,7 @@ describe('DELETE /api/notes/:id', () => {
     await request(app).delete('/api/notes/test').expect(500);
   });
 });
+
 // HTML routes
 describe('GET /', () => {
   test('should respond 200', async () => {

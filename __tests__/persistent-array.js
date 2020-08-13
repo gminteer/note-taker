@@ -11,12 +11,10 @@ describe('PersistentArray', () => {
     await expect(testArray.write()).resolves.toBeFalsy();
     spy.mockRestore();
   });
-  test('.write() should retun an error if it caught one', async () => {
+  test('.write() should return an error if it caught one', async () => {
     const testError = new Error('testError');
     const testArray = new PersistentArray('test', []);
-    const spy = jest.spyOn(fs.promises, 'writeFile').mockImplementation(() => {
-      throw testError;
-    });
+    const spy = jest.spyOn(fs.promises, 'writeFile').mockImplementation(() => Promise.reject(testError));
     await expect(testArray.write()).resolves.toBe(testError);
     spy.mockRestore();
   });
