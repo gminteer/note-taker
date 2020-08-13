@@ -3,10 +3,10 @@ const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 jest.mock('../lib/persistent-array');
 const PersistentArray = require('../lib/persistent-array');
 const Notes = require('../lib/notes');
-const notes = new Notes(new PersistentArray());
+const notes = new Notes();
 
 beforeEach(() => {
-  notes._data.array = [
+  notes._data = new PersistentArray([
     {
       title: 'Test1',
       text: 'This is a test note.',
@@ -22,8 +22,7 @@ beforeEach(() => {
       text: 'This is a third test note.',
       id: 'f42aaa07-7ca6-431d-b7f9-0e1d58f906ec',
     },
-  ];
-  notes._data.writeShouldSucceed = true;
+  ]);
 });
 
 describe('lib/notes.js', () => {
@@ -42,8 +41,7 @@ describe('lib/notes.js', () => {
     });
     test('should store the created object in the notes array', async () => {
       const oldLength = notes._data.array.length;
-      // eslint-disable-next-line no-unused-vars
-      const newNote = await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
+      await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
       expect(notes._data.array.length).toEqual(oldLength + 1);
     });
     test('should throw an error on invalid input', async () => {
@@ -56,14 +54,23 @@ describe('lib/notes.js', () => {
   });
 
   describe('.read(id)', () => {
+    test('should async wait for data if data is a promise', async () => {
+      notes._data = Promise.resolve(new PersistentArray([{id: 'test', title: 'testTitle', text: 'testText'}]));
+      await expect(notes.read('test')).resolves.toEqual({
+        id: 'test',
+        title: 'testTitle',
+        text: 'testText',
+      });
+    });
     test('should return all notes when called with no arguments', async () => {
-      const noteList = await notes.read();
-      expect(noteList.length).toEqual(notes._data.array.length);
+      await expect(notes.read()).resolves.toMatchSnapshot();
     });
     test('should return a note with a matching id if it exists', async () => {
-      const note = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
-      expect(note.title).toEqual('Test1');
-      expect(note.text).toEqual('This is a test note.');
+      await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toEqual({
+        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
+        title: 'Test1',
+        text: 'This is a test note.',
+      });
     });
     test('should throw an error if no id matches', async () => {
       await expect(notes.read(nilUuid)).rejects.toThrowErrorMatchingSnapshot();
@@ -77,11 +84,8 @@ describe('lib/notes.js', () => {
         text: 'differentText',
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
-      const result = await notes.update(replacementNote);
-      expect(result).toEqual(replacementNote);
-      const getNote = await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
-      expect(getNote.title).toEqual('differentTitle');
-      expect(getNote.text).toEqual('differentText');
+      await expect(notes.update(replacementNote)).resolves.toEqual(replacementNote);
+      await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toEqual(replacementNote);
     });
     test("shouldn't change the size of the array", async () => {
       const replacementNote = {
@@ -116,12 +120,12 @@ describe('lib/notes.js', () => {
     });
   });
 
-  describe('.drop(id)', () => {
+  describe('.delete(id)', () => {
     test('should remove the note matching the id', async () => {
       await expect(notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toBeTruthy();
       await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrowErrorMatchingSnapshot();
     });
-    test('notes array should be one element shorter after dropping a note', async () => {
+    test('notes array should be one element shorter after deleting a note', async () => {
       const oldLength = notes._data.array.length;
       await notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf');
       expect(notes._data.array.length).toEqual(oldLength - 1);

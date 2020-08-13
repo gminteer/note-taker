@@ -4,11 +4,31 @@ exports[`lib/notes.js .create(note) should throw an error if the write fails 1`]
 
 exports[`lib/notes.js .create(note) should throw an error on invalid input 1`] = `"suggested note does not validate"`;
 
-exports[`lib/notes.js .drop(id) should remove the note matching the id 1`] = `"\\"70a38567-e3e1-4c44-8777-86647acd5adf\\" not in notes array"`;
+exports[`lib/notes.js .delete(id) should remove the note matching the id 1`] = `"\\"70a38567-e3e1-4c44-8777-86647acd5adf\\" not in notes array"`;
 
-exports[`lib/notes.js .drop(id) should throw an error if id isn't matched 1`] = `"\\"00000000-0000-0000-0000-000000000000\\" not in notes array"`;
+exports[`lib/notes.js .delete(id) should throw an error if id isn't matched 1`] = `"\\"00000000-0000-0000-0000-000000000000\\" not in notes array"`;
 
-exports[`lib/notes.js .drop(id) should throw an error if the write fails 1`] = `"write failed with \\"EMOCKERROR\\""`;
+exports[`lib/notes.js .delete(id) should throw an error if the write fails 1`] = `"write failed with \\"EMOCKERROR\\""`;
+
+exports[`lib/notes.js .read(id) should return all notes when called with no arguments 1`] = `
+Array [
+  Object {
+    "id": "70a38567-e3e1-4c44-8777-86647acd5adf",
+    "text": "This is a test note.",
+    "title": "Test1",
+  },
+  Object {
+    "id": "7fe3a135-568d-4c56-9fc6-3fb9f30bf8ab",
+    "text": "This is also a test note.",
+    "title": "Test2",
+  },
+  Object {
+    "id": "f42aaa07-7ca6-431d-b7f9-0e1d58f906ec",
+    "text": "This is a third test note.",
+    "title": "Test3",
+  },
+]
+`;
 
 exports[`lib/notes.js .read(id) should throw an error if no id matches 1`] = `"\\"00000000-0000-0000-0000-000000000000\\" not in notes array"`;
 
