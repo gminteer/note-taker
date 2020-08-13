@@ -26,4 +26,5 @@ module.exports = {
     sourceType: 'module',
     ecmaVersion: 2018,
   },
+  ignorePatterns: ['/public/**/*.js'],
 };
