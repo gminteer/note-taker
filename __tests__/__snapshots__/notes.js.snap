@@ -2,7 +2,7 @@
 
 exports[`lib/notes.js .create(note) should throw an error if the write fails 1`] = `"write failed with \\"EMOCKERROR\\""`;
 
-exports[`lib/notes.js .create(note) should throw an error on invalid input 1`] = `"suggested note does not validate"`;
+exports[`lib/notes.js .create(note) should throw an error on invalid input 1`] = `"suggested note does not validate: title cannot be blank, text cannot be blank"`;
 
 exports[`lib/notes.js .delete(id) should remove the note matching the id 1`] = `"\\"70a38567-e3e1-4c44-8777-86647acd5adf\\" not in notes array"`;
 
@@ -34,6 +34,6 @@ exports[`lib/notes.js .read(id) should throw an error if no id matches 1`] = `"\
 
 exports[`lib/notes.js .update(note) should throw an error if id isn't matched 1`] = `"\\"00000000-0000-0000-0000-000000000000\\" not in notes array"`;
 
-exports[`lib/notes.js .update(note) should throw an error if the update is invalid 1`] = `"suggested note does not validate"`;
+exports[`lib/notes.js .update(note) should throw an error if the update is invalid 1`] = `"suggested note does not validate: title cannot be blank"`;
 
 exports[`lib/notes.js .update(note) should throw an error if the write fails 1`] = `"write failed with \\"EMOCKERROR\\""`;

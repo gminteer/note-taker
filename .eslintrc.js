@@ -6,7 +6,7 @@ module.exports = {
     'jest/globals': true,
   },
   globals: {
-    $: 'readonly', // there's probably a reason why jQuery plugin doesn't automatically do this
+    $: 'readonly', // there's probably a reason why the jQuery plugin doesn't automatically do this
   },
   plugins: ['prettier', 'promise', 'import', 'node', 'compat', 'jest', 'jquery'],
   extends: ['eslint:recommended', 'plugin:jquery/deprecated', 'google', 'prettier'],

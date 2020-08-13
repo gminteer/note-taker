@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">98% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>45/45</span>
+                <span class='fraction'>49/50</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">96.3% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>26/26</span>
+                <span class='fraction'>26/27</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>30/30</span>
+                <span class='fraction'>35/35</span>
             </div>
         
             
@@ -103,12 +103,28 @@
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">18x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -154,8 +170,16 @@
 const {NotesError} = require('./errors');
 &nbsp;
 const isNonEmptyString = (str) =&gt; str &amp;&amp; typeof str === 'string';
-const isValid = (note) =&gt; isNonEmptyString(note.title) &amp;&amp; isNonEmptyString(note.text) &amp;&amp; isValidUuid(note.id);
+// const isValid = (note) =&gt; isNonEmptyString(note.title) &amp;&amp; isNonEmptyString(note.text) &amp;&amp; isValidUuid(note.id);
 &nbsp;
+function validator(note) {
+  const errors = [];
+  if (!isNonEmptyString(note.title)) errors.push(' title cannot be blank');
+  if (!isNonEmptyString(note.text)) errors.push(' text cannot be blank');
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isValidUuid(note.id)) <span class="cstat-no" title="statement not covered" >errors.push(' id is invalid');</span>
+  if (errors.length &gt; 0)
+    throw new NotesError('NOTE_FAILED_VALIDATION', note, `suggested note does not validate:${errors.toString()}`);
+}
 class Notes {
   constructor(data) {
     this._data = data;
@@ -169,7 +193,7 @@ class Notes {
   }
   async create(note = {}) {
     note.id = uuid();
-    if (!isValid(note)) throw new NotesError('NOTE_FAILED_VALIDATION', note);
+    validator(note);
     this._data.array.push(note);
     const notOk = await this._data.write();
     if (notOk) throw new NotesError('NOTE_WRITE_ERROR', notOk);
@@ -178,7 +202,7 @@ class Notes {
   async update(note) {
     const index = this._data.array.findIndex((item) =&gt; item.id === note.id);
     if (index &lt; 0) throw new NotesError('NOTE_NOT_FOUND', note);
-    if (!isValid(note)) throw new NotesError('NOTE_FAILED_VALIDATION', note);
+    validator(note);
     this._data.array.splice(index, 1, note);
     const notOk = await this._data.write();
     if (notOk) throw new NotesError('NOTE_WRITE_ERROR', notOk);
