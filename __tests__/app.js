@@ -14,6 +14,7 @@ beforeEach(() => {
 });
 
 // API routes
+
 describe('GET /api/notes', () => {
   test('should respond 200 with body containing notes array', async () => {
     const response = await request(app).get('/api/notes').expect(200);
