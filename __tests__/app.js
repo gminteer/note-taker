@@ -1,4 +1,4 @@
-/* global shouldBeFound:writable, shouldValidate:writable, writeShouldSucceed:writable */
+/* global notesMock:writable */
 // using globals since I don't think there's an easy way to grab a reference to the mock Notes object the app has.
 const request = require('supertest');
 
@@ -8,9 +8,11 @@ const Notes = require('../lib/notes');
 const app = require('../app');
 
 beforeEach(() => {
-  shouldBeFound = true;
-  shouldValidate = true;
-  writeShouldSucceed = true;
+  notesMock = {
+    shouldFind: true,
+    shouldValidate: true,
+    shouldSysError: false,
+  };
 });
 
 // API routes
@@ -32,11 +34,11 @@ describe('GET /api/notes/:id', () => {
     expect(response.body).toEqual({title: 'testNote1', text: 'testText1', id: 0});
   });
   test('should respond 404 if not found', async () => {
-    shouldBeFound = false;
+    notesMock.shouldFind = false;
     await request(app).get('/api/notes/test').expect(404);
   });
   test('should respond 500 if anything else goes wrong', async () => {
-    writeShouldSucceed = false;
+    notesMock.shouldSysError = true;
     await request(app).get('/api/notes/test').expect(500);
   });
 });
@@ -48,11 +50,11 @@ describe('POST /api/notes', () => {
     expect(response.body).toEqual({test: 'test', id: 0});
   });
   test('should respond 400 if body fails validation', async () => {
-    shouldValidate = false;
+    notesMock.shouldValidate = false;
     await request(app).post('/api/notes').send({test: 'test'}).expect(400);
   });
   test('should respond 500 if write fails', async () => {
-    writeShouldSucceed = false;
+    notesMock.shouldSysError = true;
     await request(app).post('/api/notes').send({test: 'test'}).expect(500);
   });
 });
@@ -63,15 +65,15 @@ describe('PUT /api/notes/:id', () => {
     expect(response.body).toEqual({test: 'test'});
   });
   test('should respond 400 if body fails validation', async () => {
-    shouldValidate = false;
+    notesMock.shouldValidate = false;
     await request(app).put('/api/notes/test').send({test: 'test'}).expect(400);
   });
   test('should respond 404 if not found', async () => {
-    shouldBeFound = false;
+    notesMock.shouldFind = false;
     await request(app).put('/api/notes/test').send({test: 'test'}).expect(404);
   });
   test('should respond 500 if write fails', async () => {
-    writeShouldSucceed = false;
+    notesMock.shouldSysError = true;
     await request(app).put('/api/notes/test').send({test: 'test'}).expect(500);
   });
 });
@@ -81,11 +83,11 @@ describe('DELETE /api/notes/:id', () => {
     await request(app).delete('/api/notes/test').expect(204);
   });
   test('should respond 404 if not found', async () => {
-    shouldBeFound = false;
+    notesMock.shouldFind = false;
     await request(app).delete('/api/notes/test').expect(404);
   });
   test('should respond 500 if write fails', async () => {
-    writeShouldSucceed = false;
+    notesMock.shouldSysError = true;
     await request(app).delete('/api/notes/test').expect(500);
   });
 });
