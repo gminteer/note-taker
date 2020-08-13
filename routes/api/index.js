@@ -4,18 +4,14 @@ const path = require('path');
 const Notes = require('../../lib/notes');
 const PersistentArray = require('../../lib/persistent-array');
 
-(async () => {
+const isReady = (async () => {
   // Setting up the routes is wrapped in an async IIFE to avoid reading in the JSON file synchronously
   const data = await PersistentArray.build(path.join(__dirname, '../../db/db.json'));
   const notes = new Notes(data);
 
   // Read
   router.get('/notes', async (req, res) => {
-    try {
-      res.json(await notes.read());
-    } catch (err) {
-      res.status(500).json(err);
-    }
+    res.json(await notes.read());
   });
   router.get('/notes/:id', async (req, res) => {
     try {
@@ -65,6 +61,7 @@ const PersistentArray = require('../../lib/persistent-array');
       else res.status(500).json(err);
     }
   });
+  return true;
 })();
 
-module.exports = router;
+module.exports = {router, isReady};

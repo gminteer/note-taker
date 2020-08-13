@@ -5,13 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node index.js"
+    "start": "node server.js"
   },
   "jest": {
     "collectCoverage": true,
     "coverageReporters": [
       "html"
-    ]
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ],
+    "testEnvironment": "node"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +30,9 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "superagent": "^6.0.0",
+    "supertest": "^4.0.2"
   },
   "dependencies": {
     "eslint-plugin-jest": "^23.20.0",

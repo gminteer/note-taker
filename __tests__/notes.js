@@ -1,7 +1,6 @@
-const path = require('path');
 const {validate: isValidUuid, NIL: nilUuid} = require('uuid');
 
-jest.mock(path.join(__dirname, '../lib/persistent-array'));
+jest.mock('../lib/persistent-array');
 const PersistentArray = require('../lib/persistent-array');
 const Notes = require('../lib/notes');
 const notes = new Notes(new PersistentArray());
