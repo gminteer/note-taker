@@ -2,10 +2,11 @@
   "name": "note-taker",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "node server.js"
+    "start": "node server.js",
+    "start:dev": "nodemon server.js"
   },
   "jest": {
     "collectCoverage": true,
@@ -16,6 +17,14 @@
       "/node_modules/"
     ],
     "testEnvironment": "node"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "db/**/*",
+      "**/__tests__/**",
+      "**/__mocks__/**",
+      "public"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -30,6 +39,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "^4.2.1",
+    "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
     "superagent": "^6.0.0",
     "supertest": "^4.0.2"
