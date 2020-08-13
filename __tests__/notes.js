@@ -123,6 +123,11 @@ describe('lib/notes.js', () => {
       // this should also produce a different error
       await expect(notes.update(invalidBoth)).rejects.toThrowErrorMatchingSnapshot();
     });
+    test('should throw a different error if an invalid id is found when updating', async () => {
+      notes._data.array.push({title: 'invalidId', text: 'Trying to update this note should fail', id: 0xdeadbeef});
+      const invalidId = {title: 'bogus', text: 'bogus', id: 0xdeadbeef};
+      await expect(notes.update(invalidId)).rejects.toThrowErrorMatchingSnapshot();
+    });
     test('should throw an error if the write fails', async () => {
       const replacementNote = {
         title: 'differentTitle',
@@ -146,6 +151,10 @@ describe('lib/notes.js', () => {
     });
     test("should throw an error if id isn't matched", async () => {
       await expect(notes.delete(nilUuid)).rejects.toThrowErrorMatchingSnapshot();
+    });
+    test('should throw an error if an invalid id matches', async () => {
+      notes._data.array.push({title: 'invalidId', text: 'Trying to delete this note should fail', id: 0xdeadbeef});
+      await expect(notes.delete(0xdeadbeef)).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw an error if the write fails', async () => {
       notes._data.writeShouldSucceed = false;
