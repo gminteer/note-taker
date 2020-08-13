@@ -27,7 +27,7 @@ Content-Type: application/json
 
 {
   "title": "",
-  "text": "This shouldn't work."
+  "text": ""
 }
 
 ###
@@ -36,7 +36,7 @@ PUT http://127.0.0.1:3001/api/notes/347f2b0c-1e64-41d0-b135-2e60f7cb2547
 Content-Type: application/json
 
 {
-  "id": "347f2b0c-1e64-41d0-b135-2e60f7cb2547",
+  "id": "36c94ebd-3ca5-4b08-b674-3051fcbc5b88",
   "title": "Changed.",
   "text": "Changed text."
 }

@@ -25,7 +25,7 @@ router.post('/notes', async (req, res) => {
     res.append('Location', `./${note.id}`);
     res.status(201).json(note);
   } catch (err) {
-    if (err.code === 'NOTE_FAILED_VALIDATION') res.sendStatus(400);
+    if (err.code === 'NOTE_FAILED_VALIDATION') res.status(400).send(err.message);
     else res.status(500).json(err);
   }
 });
@@ -40,7 +40,7 @@ router.put('/notes/:id', async (req, res) => {
         case 'NOTE_NOT_FOUND':
           return res.sendStatus(404);
         case 'NOTE_FAILED_VALIDATION':
-          return res.sendStatus(400);
+          return res.status(400).send(err.message);
       }
     }
     return res.status(500).json(err);
