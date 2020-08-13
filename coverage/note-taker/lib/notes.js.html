@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">98% </span>
+                <span class="strong">96.3% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>49/50</span>
+                <span class='fraction'>52/54</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">95% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>35/35</span>
+                <span class='fraction'>38/40</span>
             </div>
         
             
@@ -111,20 +111,34 @@
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
 <a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">24x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">12x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -146,9 +160,9 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">3x</span>
@@ -170,16 +184,23 @@
 const {NotesError} = require('./errors');
 &nbsp;
 const isNonEmptyString = (str) =&gt; str &amp;&amp; typeof str === 'string';
-// const isValid = (note) =&gt; isNonEmptyString(note.title) &amp;&amp; isNonEmptyString(note.text) &amp;&amp; isValidUuid(note.id);
 &nbsp;
 function validator(note) {
   const errors = [];
+  const detail = {note};
+  const noteError = new NotesError('NOTE_FAILED_VALIDATION', detail);
   if (!isNonEmptyString(note.title)) errors.push(' title cannot be blank');
   if (!isNonEmptyString(note.text)) errors.push(' text cannot be blank');
-  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isValidUuid(note.id)) <span class="cstat-no" title="statement not covered" >errors.push(' id is invalid');</span>
-  if (errors.length &gt; 0)
-    throw new NotesError('NOTE_FAILED_VALIDATION', note, `suggested note does not validate:${errors.toString()}`);
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!isValidUuid(note.id)) {
+<span class="cstat-no" title="statement not covered" >    errors.push(' id is invalid');</span>
+<span class="cstat-no" title="statement not covered" >    detail.dbIsLikelyCorrupt = true;</span>
+  }
+  if (errors.length &gt; 0) {
+    noteError.message = `suggested note does not validate:${errors.toString()}`;
+    throw noteError;
+  }
 }
+&nbsp;
 class Notes {
   constructor(data) {
     this._data = data;
@@ -226,7 +247,7 @@ module.exports = Notes;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Aug 13 2020 16:53:48 GMT-0400 (Eastern Daylight Time)
+                at Thu Aug 13 2020 17:44:47 GMT-0400 (Eastern Daylight Time)
             </div>
         </div>
         <script src="../../prettify.js"></script>

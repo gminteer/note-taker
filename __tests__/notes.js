@@ -101,13 +101,27 @@ describe('lib/notes.js', () => {
       const invalidNote = {title: 'invalidNote', text: 'invalidText', id: nilUuid};
       await expect(notes.update(invalidNote)).rejects.toThrowErrorMatchingSnapshot();
     });
-    test('should throw an error if the update is invalid', async () => {
-      const invalidUpdate = {
+    test('should throw an error specifying validation errors if the update is invalid', async () => {
+      const invalidTitle = {
         title: '',
         text: "this shouldn't work",
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
-      await expect(notes.update(invalidUpdate)).rejects.toThrowErrorMatchingSnapshot();
+      await expect(notes.update(invalidTitle)).rejects.toThrowErrorMatchingSnapshot();
+      const invalidText = {
+        title: "this shouldn't work",
+        text: '',
+        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
+      };
+      // this should produce a different error than the last one
+      await expect(notes.update(invalidText)).rejects.toThrowErrorMatchingSnapshot();
+      const invalidBoth = {
+        title: '',
+        text: '',
+        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
+      };
+      // this should also produce a different error
+      await expect(notes.update(invalidBoth)).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw an error if the write fails', async () => {
       const replacementNote = {
