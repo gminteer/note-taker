@@ -32,6 +32,8 @@ Array [
 ]
 `;
 
+exports[`lib/notes.js .read(id) should throw an error if an invalid id matches 1`] = `"\\"3735928559\\" is invalid id, but found match"`;
+
 exports[`lib/notes.js .read(id) should throw an error if no id matches 1`] = `"\\"00000000-0000-0000-0000-000000000000\\" not in notes array"`;
 
 exports[`lib/notes.js .update(note) should throw a different error if an invalid id is found when updating 1`] = `"\\"3735928559\\" is invalid id, but found match"`;

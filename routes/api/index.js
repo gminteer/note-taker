@@ -41,6 +41,8 @@ router.put('/notes/:id', async (req, res) => {
           return res.sendStatus(404);
         case 'NOTE_FAILED_VALIDATION':
           return res.status(400).send(err.message);
+        case 'NOTE_INVALID_ID':
+          return res.status(500).send(err.message);
       }
     }
     return res.status(500).json(err);
@@ -53,8 +55,15 @@ router.delete('/notes/:id', async (req, res) => {
     await notes.delete(req.params.id);
     res.sendStatus(204);
   } catch (err) {
-    if (err.code === 'NOTE_NOT_FOUND') res.sendStatus(404);
-    else res.status(500).json(err);
+    if (err.code) {
+      switch (err.code) {
+        case 'NOTE_NOT_FOUND':
+          return res.sendStatus(404);
+        case 'NOTE_INVALID_ID':
+          return res.status(500).send(err.message);
+      }
+    }
+    return res.status(500).json(err);
   }
 });
 

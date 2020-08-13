@@ -55,9 +55,11 @@ describe('lib/notes.js', () => {
 
   describe('.read(id)', () => {
     test('should async wait for data if data is a promise', async () => {
-      notes._data = Promise.resolve(new PersistentArray([{id: 'test', title: 'testTitle', text: 'testText'}]));
-      await expect(notes.read('test')).resolves.toEqual({
-        id: 'test',
+      notes._data = Promise.resolve(
+        new PersistentArray([{id: '70a38567-e3e1-4c44-8777-86647acd5adf', title: 'testTitle', text: 'testText'}])
+      );
+      await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toEqual({
+        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
         title: 'testTitle',
         text: 'testText',
       });
@@ -74,6 +76,10 @@ describe('lib/notes.js', () => {
     });
     test('should throw an error if no id matches', async () => {
       await expect(notes.read(nilUuid)).rejects.toThrowErrorMatchingSnapshot();
+    });
+    test('should throw an error if an invalid id matches', async () => {
+      notes._data.array.push({title: 'invalidId', text: 'Trying to read this note should fail', id: 0xdeadbeef});
+      await expect(notes.read(0xdeadbeef)).rejects.toThrowErrorMatchingSnapshot();
     });
   });
 

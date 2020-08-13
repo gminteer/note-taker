@@ -62,7 +62,7 @@ var renderActiveNote = function() {
 var handleNoteSave = function() {
   var newNote = {
     title: $noteTitle.val(),
-    text: $noteText.val(),
+    text: $noteText.val()
   };
   if(activeNote.id) {
     newNote.id = activeNote.id;

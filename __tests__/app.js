@@ -11,6 +11,7 @@ beforeEach(() => {
   notesMock = {
     shouldFind: true,
     shouldValidate: true,
+    idShouldValidate: true,
     shouldSysError: false,
   };
 });
@@ -36,6 +37,10 @@ describe('GET /api/notes/:id', () => {
   test('should respond 404 if not found', async () => {
     notesMock.shouldFind = false;
     await request(app).get('/api/notes/test').expect(404);
+  });
+  test('should respond 500 if invalid id matches', async () => {
+    notesMock.idShouldValidate = false;
+    await request(app).get('api/notes/test').expect(500);
   });
   test('should respond 500 if anything else goes wrong', async () => {
     notesMock.shouldSysError = true;
@@ -72,6 +77,10 @@ describe('PUT /api/notes/:id', () => {
     notesMock.shouldFind = false;
     await request(app).put('/api/notes/test').send({test: 'test'}).expect(404);
   });
+  test('should respond 500 if invalid id matches', async () => {
+    notesMock.idShouldValidate = false;
+    await request(app).put('/api/notes/test').send({test: 'test'}).expect(500);
+  });
   test('should respond 500 if write fails', async () => {
     notesMock.shouldSysError = true;
     await request(app).put('/api/notes/test').send({test: 'test'}).expect(500);
@@ -85,6 +94,10 @@ describe('DELETE /api/notes/:id', () => {
   test('should respond 404 if not found', async () => {
     notesMock.shouldFind = false;
     await request(app).delete('/api/notes/test').expect(404);
+  });
+  test('should respond 500 if invalid id matches', async () => {
+    notesMock.idShouldValidate = false;
+    await request(app).delete('/api/notes/test').expect(500);
   });
   test('should respond 500 if write fails', async () => {
     notesMock.shouldSysError = true;
