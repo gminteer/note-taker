@@ -32,13 +32,22 @@ var deleteNote = function(id) {
   });
 };
 
+// SECRET BONUS A function for updating a note in the db
+var updateNote = function(note) {
+  return $.ajax({
+    url: "api/notes/" + note.id,
+    data: note,
+    method: "PUT"
+  });
+};
+
 // If there is an activeNote, display it, otherwise render empty inputs
 var renderActiveNote = function() {
   $saveNoteBtn.hide();
 
   if (activeNote.id) {
-    $noteTitle.attr("readonly", true);
-    $noteText.attr("readonly", true);
+    // $noteTitle.attr("readonly", true);
+    // $noteText.attr("readonly", true);
     $noteTitle.val(activeNote.title);
     $noteText.val(activeNote.text);
   } else {
@@ -53,10 +62,16 @@ var renderActiveNote = function() {
 var handleNoteSave = function() {
   var newNote = {
     title: $noteTitle.val(),
-    text: $noteText.val()
+    text: $noteText.val(),
   };
-
-  saveNote(newNote).then(function(data) {
+  if(activeNote.id) {
+    newNote.id = activeNote.id;
+    var apiFunc = updateNote;
+  } else {
+    var apiFunc = saveNote;
+  }
+  apiFunc(newNote).then(function(data) {
+    activeNote = newNote;
     getAndRenderNotes();
     renderActiveNote();
   });
