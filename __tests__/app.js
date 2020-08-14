@@ -40,7 +40,7 @@ describe('GET /api/notes/:id', () => {
   });
   test('should respond 500 if invalid id matches', async () => {
     notesMock.idShouldValidate = false;
-    await request(app).get('api/notes/test').expect(500);
+    await request(app).get('/api/notes/test').expect(500);
   });
   test('should respond 500 if anything else goes wrong', async () => {
     notesMock.shouldSysError = true;
@@ -107,12 +107,21 @@ describe('DELETE /api/notes/:id', () => {
 
 // HTML routes
 describe('GET /', () => {
-  test('should respond 200', async () => {
-    await request(app).get('/').expect(200);
+  test('should respond 200 with body containing static content', async () => {
+    const response = await request(app).get('/').expect(200);
+    expect(response.text).toMatchSnapshot();
   });
 });
 describe('GET /notes', () => {
-  test('should respond 200', async () => {
-    await request(app).get('/notes').expect(200);
+  test('should respond 200 with body containing static content', async () => {
+    const response = await request(app).get('/notes').expect(200);
+    console.log(response.text);
+    expect(response.text).toMatchSnapshot();
+  });
+});
+describe('GET /(anything else)', () => {
+  test('should respond 200 with body containing static content', async () => {
+    const response = await request(app).get('/test').expect(200);
+    expect(response.text).toMatchSnapshot();
   });
 });
