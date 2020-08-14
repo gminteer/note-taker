@@ -30,7 +30,7 @@ describe('GET /api/notes', () => {
 });
 
 describe('GET /api/notes/:id', () => {
-  test('should respond 200 with body containing a note if found on success', async () => {
+  test('should respond 200 with body containing a note if found', async () => {
     const response = await request(app).get('/api/notes/test').expect(200);
     expect(response.body).toEqual({title: 'testNote1', text: 'testText1', id: 0});
   });
