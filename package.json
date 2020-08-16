@@ -29,9 +29,18 @@
       "public"
     ]
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "note",
+    "to-do",
+    "everything-as-microservice"
+  ],
+  "author": "Greg Minteer <gminteer@gmail.com> (https://gminteer.github.io)",
+  "homepage": "https://github.com/gminteer/note-taker#readme",
+  "bugs": {
+    "url": "https://github.com/gminteer/note-taker/issues"
+  },
+  "repository": "github:gminteer/note-taker",
+  "license": "Apache-2.0",
   "devDependencies": {
     "eslint": "^7.6.0",
     "eslint-config-google": "^0.14.0",
