@@ -40,6 +40,7 @@ module.exports = {
       },
     },
     {
+      // eslint does not like the front-end by default...
       files: ['public/**/*.js', 'static/**/*.js'],
       plugins: basePlugins.concat(['compat', 'jquery']),
       env: {

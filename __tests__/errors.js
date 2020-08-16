@@ -11,5 +11,7 @@ describe('NotesError', () => {
     expect(failedValidationError).toMatchSnapshot();
     const writeError = new NotesError('NOTE_WRITE_ERROR', {code: 'test'});
     expect(writeError).toMatchSnapshot();
+    const initError = new NotesError('NOTE_INIT_ERROR', {code: 'test'});
+    expect(initError).toMatchSnapshot();
   });
 });

@@ -42,6 +42,7 @@ var updateNote = function(note) {
 };
 
 // If there is an activeNote, display it, otherwise render empty inputs
+// hacks: notes that exist are editable, because we support updating...
 var renderActiveNote = function() {
   $saveNoteBtn.hide();
 
@@ -59,6 +60,7 @@ var renderActiveNote = function() {
 };
 
 // Get the note data from the inputs, save it to the db and update the view
+// hacks: SECRET BONUS: also handle updating changed notes.
 var handleNoteSave = function() {
   var newNote = {
     title: $noteTitle.val(),

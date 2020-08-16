@@ -5,6 +5,9 @@ const PersistentArray = require('../lib/persistent-array');
 const Notes = require('../lib/notes');
 const notes = new Notes();
 
+const fakeError = new Error();
+fakeError.code = 'EMOCKERROR';
+
 beforeEach(() => {
   notes._data = new PersistentArray([
     {
@@ -27,6 +30,17 @@ beforeEach(() => {
 
 describe('lib/notes.js', () => {
   describe('.create(note)', () => {
+    test('should async wait for data if data is a promise', async () => {
+      notes._data = Promise.resolve(
+        new PersistentArray([{id: '70a38567-e3e1-4c44-8777-86647acd5adf', title: 'testTitle', text: 'testText'}])
+      );
+      await notes.create({title: 'newNoteTitle', text: 'newNoteText'});
+      expect(notes._data instanceof Promise).toBeFalsy();
+    });
+    test('should throw an error if data promise rejects', async () => {
+      notes._data = Promise.reject(fakeError);
+      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).rejects.toThrowErrorMatchingSnapshot();
+    });
     test('should return an object', async () => {
       await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).resolves.toEqual(expect.any(Object));
     });
@@ -58,11 +72,12 @@ describe('lib/notes.js', () => {
       notes._data = Promise.resolve(
         new PersistentArray([{id: '70a38567-e3e1-4c44-8777-86647acd5adf', title: 'testTitle', text: 'testText'}])
       );
-      await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toEqual({
-        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
-        title: 'testTitle',
-        text: 'testText',
-      });
+      await notes.read('70a38567-e3e1-4c44-8777-86647acd5adf');
+      expect(notes._data instanceof Promise).toBeFalsy();
+    });
+    test('should throw an error if data promise rejects', async () => {
+      notes._data = Promise.reject(fakeError);
+      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should return all notes when called with no arguments', async () => {
       await expect(notes.read()).resolves.toMatchSnapshot();
@@ -84,21 +99,30 @@ describe('lib/notes.js', () => {
   });
 
   describe('.update(note)', () => {
-    test('should replace the note matching that id if it exists', async () => {
-      const replacementNote = {
+    let replacementNote;
+    beforeEach(() => {
+      replacementNote = {
         title: 'differentTitle',
         text: 'differentText',
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
+    });
+    test('should async wait for data if data is a promise', async () => {
+      notes._data = Promise.resolve(
+        new PersistentArray([{id: '70a38567-e3e1-4c44-8777-86647acd5adf', title: 'testTitle', text: 'testText'}])
+      );
+      await notes.update(replacementNote);
+      expect(notes._data instanceof Promise).toBeFalsy();
+    });
+    test('should throw an error if data promise rejects', async () => {
+      notes._data = Promise.reject(fakeError);
+      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).rejects.toThrowErrorMatchingSnapshot();
+    });
+    test('should replace the note matching that id if it exists', async () => {
       await expect(notes.update(replacementNote)).resolves.toEqual(replacementNote);
       await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toEqual(replacementNote);
     });
     test("shouldn't change the size of the array", async () => {
-      const replacementNote = {
-        title: 'differentTitle',
-        text: 'differentText',
-        id: '70a38567-e3e1-4c44-8777-86647acd5adf',
-      };
       const oldLength = notes._data.array.length;
       await notes.update(replacementNote);
       expect(notes._data.array.length).toEqual(oldLength);
@@ -113,20 +137,19 @@ describe('lib/notes.js', () => {
         text: "this shouldn't work",
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
+      // these three errors should be have different messages
       await expect(notes.update(invalidTitle)).rejects.toThrowErrorMatchingSnapshot();
       const invalidText = {
         title: "this shouldn't work",
         text: '',
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
-      // this should produce a different error than the last one
       await expect(notes.update(invalidText)).rejects.toThrowErrorMatchingSnapshot();
       const invalidBoth = {
         title: '',
         text: '',
         id: '70a38567-e3e1-4c44-8777-86647acd5adf',
       };
-      // this should also produce a different error
       await expect(notes.update(invalidBoth)).rejects.toThrowErrorMatchingSnapshot();
     });
     test('should throw a different error if an invalid id is found when updating', async () => {
@@ -146,6 +169,17 @@ describe('lib/notes.js', () => {
   });
 
   describe('.delete(id)', () => {
+    test('should async wait for data if data is a promise', async () => {
+      notes._data = Promise.resolve(
+        new PersistentArray([{id: '70a38567-e3e1-4c44-8777-86647acd5adf', title: 'testTitle', text: 'testText'}])
+      );
+      await notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf');
+      expect(notes._data instanceof Promise).toBeFalsy();
+    });
+    test('should throw an error if data promise rejects', async () => {
+      notes._data = Promise.reject(fakeError);
+      await expect(notes.create({title: 'newNoteTitle', text: 'newNoteText'})).rejects.toThrowErrorMatchingSnapshot();
+    });
     test('should remove the note matching the id', async () => {
       await expect(notes.delete('70a38567-e3e1-4c44-8777-86647acd5adf')).resolves.toBeTruthy();
       await expect(notes.read('70a38567-e3e1-4c44-8777-86647acd5adf')).rejects.toThrowErrorMatchingSnapshot();

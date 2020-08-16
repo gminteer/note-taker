@@ -5,3 +5,5 @@ exports[`NotesError should set a message based on provided error code if no mess
 exports[`NotesError should set a message based on provided error code if no message is provided 2`] = `[Error: suggested note does not validate]`;
 
 exports[`NotesError should set a message based on provided error code if no message is provided 3`] = `[Error: write failed with "test"]`;
+
+exports[`NotesError should set a message based on provided error code if no message is provided 4`] = `[Error: init failed with "test"]`;
