@@ -45,7 +45,7 @@ function buildApiRoutes(notes) {
   // Update
   router.put('/notes/:id', async (req, res) => {
     try {
-      res.send(await notes.update(req.body));
+      res.json(await notes.update(req.body));
     } catch (err) {
       errorHandler(err, res);
     }
